@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pwd && ls -la && cd ../.. && pwd && ls -la && npm run build:packages && npm run build:example && echo && ls -la examples && ls -la examples/vite-emailbuilder-mui && ls -la examples/vite-emailbuilder-mui/dist",
-  "outputDirectory": "dist",
-  "installCommand": "cd ../.. && npm install"
+  "buildCommand": "cd /vercel/path0 && npm run build:packages && npm run build:example",
+  "outputDirectory": "examples/vite-emailbuilder-mui/dist",
+  "installCommand": "npm install"
 }
