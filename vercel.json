@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm install && npm run build:packages && npm run build:example",
   "outputDirectory": "examples/vite-emailbuilder-mui/dist",
   "installCommand": "npm install",
   "framework": null
