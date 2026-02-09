@@ -22,12 +22,12 @@ type TButtonProps = {
 };
 export const BUTTONS: TButtonProps[] = [
   {
-    label: 'Heading',
+    label: 'Título',
     icon: <HMobiledataOutlined />,
     block: () => ({
       type: 'Heading',
       data: {
-        props: { text: 'Hello friend' },
+        props: { text: 'Olá Amigo' },
         style: {
           padding: { top: 16, bottom: 16, left: 24, right: 24 },
         },
@@ -35,12 +35,12 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Text',
+    label: 'Texto',
     icon: <NotesOutlined />,
     block: () => ({
       type: 'Text',
       data: {
-        props: { text: 'My new text block' },
+        props: { text: 'Meu novo bloco de texto' },
         style: {
           padding: { top: 16, bottom: 16, left: 24, right: 24 },
           fontWeight: 'normal',
@@ -50,13 +50,13 @@ export const BUTTONS: TButtonProps[] = [
   },
 
   {
-    label: 'Button',
+    label: 'Botão',
     icon: <SmartButtonOutlined />,
     block: () => ({
       type: 'Button',
       data: {
         props: {
-          text: 'Button',
+          text: 'Botão',
           url: 'https://www.usewaypoint.com',
         },
         style: { padding: { top: 16, bottom: 16, left: 24, right: 24 } },
@@ -64,14 +64,14 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Image',
+    label: 'Imagem',
     icon: <ImageOutlined />,
     block: () => ({
       type: 'Image',
       data: {
         props: {
           url: 'https://assets.usewaypoint.com/sample-image.jpg',
-          alt: 'Sample product',
+          alt: 'Produto de exemplo',
           contentAlignment: 'middle',
           linkHref: null,
         },
@@ -94,7 +94,7 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Divider',
+    label: 'Divisor',
     icon: <HorizontalRuleOutlined />,
     block: () => ({
       type: 'Divider',
@@ -107,7 +107,7 @@ export const BUTTONS: TButtonProps[] = [
     }),
   },
   {
-    label: 'Spacer',
+    label: 'Espaçador',
     icon: <Crop32Outlined />,
     block: () => ({
       type: 'Spacer',
@@ -120,7 +120,7 @@ export const BUTTONS: TButtonProps[] = [
     block: () => ({
       type: 'Html',
       data: {
-        props: { contents: '<strong>Hello world</strong>' },
+        props: { contents: '<strong>Olá mundo</strong>' },
         style: {
           fontSize: 16,
           textAlign: null,

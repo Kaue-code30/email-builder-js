@@ -1,11 +1,11 @@
 import { alpha, createTheme, darken, lighten } from '@mui/material/styles';
 
-const BRAND_NAVY = '#212443';
-const BRAND_BLUE = '#0079CC';
-const BRAND_GREEN = '#1F8466';
-const BRAND_RED = '#E81212';
-const BRAND_YELLOW = '#F6DC9F';
-const BRAND_PURPLE = '#6C0E7C';
+const BRAND_NAVY = '#29265B';
+const BRAND_BLUE = '#29265B';
+const BRAND_GREEN = '#009881';
+const BRAND_RED = '#CB1919';
+const BRAND_YELLOW = '#FBC709';
+const BRAND_PURPLE = '#29265B';
 const BRAND_BROWN = '#CC996C';
 const STANDARD_FONT_FAMILY =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
@@ -18,8 +18,8 @@ const BASE_THEME = createTheme({
       default: '#f2f5f7',
     },
     text: {
-      primary: '#1F1F21',
-      secondary: '#4F4F4F',
+      primary: '#363535',
+      secondary: '#363535',
     },
   },
   typography: {

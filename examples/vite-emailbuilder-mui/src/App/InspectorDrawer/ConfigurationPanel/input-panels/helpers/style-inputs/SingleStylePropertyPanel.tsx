@@ -25,9 +25,9 @@ export default function SingleStylePropertyPanel({ name, value, onChange }: Styl
 
   switch (name) {
     case 'backgroundColor':
-      return <NullableColorInput label="Background color" defaultValue={defaultValue} onChange={handleChange} />;
+      return <NullableColorInput label="Cor de fundo" defaultValue={defaultValue} onChange={handleChange} />;
     case 'borderColor':
-      return <NullableColorInput label="Border color" defaultValue={defaultValue} onChange={handleChange} />;
+      return <NullableColorInput label="Cor da borda" defaultValue={defaultValue} onChange={handleChange} />;
     case 'borderRadius':
       return (
         <SliderInput
@@ -43,16 +43,16 @@ export default function SingleStylePropertyPanel({ name, value, onChange }: Styl
         />
       );
     case 'color':
-      return <NullableColorInput label="Text color" defaultValue={defaultValue} onChange={handleChange} />;
+      return <NullableColorInput label="Cor do texto" defaultValue={defaultValue} onChange={handleChange} />;
     case 'fontFamily':
-      return <NullableFontFamily label="Font family" defaultValue={defaultValue} onChange={handleChange} />;
+      return <NullableFontFamily label="Fonte" defaultValue={defaultValue} onChange={handleChange} />;
     case 'fontSize':
-      return <FontSizeInput label="Font size" defaultValue={defaultValue} onChange={handleChange} />;
+      return <FontSizeInput label="Tamanho da fonte" defaultValue={defaultValue} onChange={handleChange} />;
     case 'fontWeight':
-      return <FontWeightInput label="Font weight" defaultValue={defaultValue} onChange={handleChange} />;
+      return <FontWeightInput label="Peso da fonte" defaultValue={defaultValue} onChange={handleChange} />;
     case 'textAlign':
-      return <TextAlignInput label="Alignment" defaultValue={defaultValue} onChange={handleChange} />;
+      return <TextAlignInput label="Alinhamento" defaultValue={defaultValue} onChange={handleChange} />;
     case 'padding':
-      return <PaddingInput label="Padding" defaultValue={defaultValue} onChange={handleChange} />;
+      return <PaddingInput label="Espaçamento interno" defaultValue={defaultValue} onChange={handleChange} />;
   }
 }

@@ -11,7 +11,7 @@ export default function DownloadJson() {
     return `data:text/plain,${encodeURIComponent(JSON.stringify(doc, null, '  '))}`;
   }, [doc]);
   return (
-    <Tooltip title="Download JSON file">
+    <Tooltip title="Baixar arquivo JSON">
       <IconButton href={href} download="emailTemplate.json">
         <FileDownloadOutlined fontSize="small" />
       </IconButton>

@@ -21,11 +21,11 @@ export default function ShareButton() {
 
   return (
     <>
-      <IconButton onClick={onClick}>
-        <Tooltip title="Share current template">
+      {/* <IconButton onClick={onClick}>
+        <Tooltip title="">
           <IosShareOutlined fontSize="small" />
         </Tooltip>
-      </IconButton>
+      </IconButton> */}
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={message !== null}
