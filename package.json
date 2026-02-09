@@ -22,7 +22,9 @@
     "examples/*"
   ],
   "scripts": {
-    "build": "npx tsc",
+    "build": "npm run build:packages && npm run build:example",
+    "build:packages": "npm run build --workspaces --if-present --workspace=packages/*",
+    "build:example": "cd examples/vite-emailbuilder-mui && npm run build",
     "test": "npx jest"
   },
   "author": "carlos@usewaypoint.com",
