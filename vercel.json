@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && npm run build:packages && npm run build:example",
+  "buildCommand": "npm run build --workspace=packages/document-core && npm run build --workspace=packages/block-container && npm run build --workspace=packages/block-columns-container && npm run build --workspace=packages/block-divider && npm run build --workspace=packages/block-heading && npm run build --workspace=packages/block-html && npm run build --workspace=packages/block-avatar && npm run build --workspace=packages/block-button && npm run build --workspace=packages/block-image && npm run build --workspace=packages/block-spacer && npm run build --workspace=packages/block-text && npm run build --workspace=packages/email-builder && npm run build --workspace=examples/vite-emailbuilder-mui",
   "outputDirectory": "examples/vite-emailbuilder-mui/dist",
   "installCommand": "npm install",
   "framework": null
