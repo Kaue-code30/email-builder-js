@@ -1,5 +1,14 @@
 {
   "buildCommand": "cd /vercel/path0 && npm run build:packages && npm run build:example",
   "outputDirectory": "dist",
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "ALLOWALL" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://SEU_DOMINIO" }
+      ]
+    }
+  ]
 }
