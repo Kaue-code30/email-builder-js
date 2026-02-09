@@ -26,12 +26,12 @@ export default function App() {
   return (
     <>
       <InspectorDrawer />
-      <SamplesDrawer />
+      {/* <SamplesDrawer /> */}
 
       <Stack
         sx={{
           marginRight: inspectorDrawerOpen ? `${INSPECTOR_DRAWER_WIDTH}px` : 0,
-          marginLeft: samplesDrawerOpen ? `${SAMPLES_DRAWER_WIDTH}px` : 0,
+          
           transition: [marginLeftTransition, marginRightTransition].join(', '),
         }}
       >

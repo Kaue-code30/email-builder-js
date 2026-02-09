@@ -7,7 +7,7 @@ import { setSidebarTab, useInspectorDrawerOpen, useSelectedSidebarTab } from '..
 import ConfigurationPanel from './ConfigurationPanel';
 import StylesPanel from './StylesPanel';
 
-export const INSPECTOR_DRAWER_WIDTH = 320;
+export const INSPECTOR_DRAWER_WIDTH = 300;
 
 export default function InspectorDrawer() {
   const selectedSidebarTab = useSelectedSidebarTab();

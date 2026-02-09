@@ -46,14 +46,14 @@ export default function MainTabsGroup() {
           </Tooltip>
         }
       />
-      <Tab
+      {/* <Tab
         value="json"
         label={
           <Tooltip title="Saída JSON">
             <DataObjectOutlined fontSize="small" />
           </Tooltip>
         }
-      />
+      /> */}
     </Tabs>
   );
 }
