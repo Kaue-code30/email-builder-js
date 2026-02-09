@@ -1,5 +1,5 @@
 {
   "buildCommand": "cd /vercel/path0 && npm run build:packages && npm run build:example",
-  "outputDirectory": "examples/vite-emailbuilder-mui/dist",
+  "outputDirectory": "dist",
   "installCommand": "npm install"
 }
