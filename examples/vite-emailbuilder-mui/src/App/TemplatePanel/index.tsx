@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { MonitorOutlined, PhoneIphoneOutlined } from '@mui/icons-material';
+import { Reader, renderToStaticMarkup } from '@usewaypoint/email-builder';
 import { Box, Stack, SxProps, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
-import { Reader } from '@usewaypoint/email-builder';
+import { MonitorOutlined, PhoneIphoneOutlined } from '@mui/icons-material';
 
 import EditorBlock from '../../documents/editor/EditorBlock';
 import {
@@ -25,6 +25,14 @@ export default function TemplatePanel() {
   const document = useDocument();
   const selectedMainTab = useSelectedMainTab();
   const selectedScreenSize = useSelectedScreenSize();
+
+  // Envia o HTML para o parent quando o documento mudar
+  useEffect(() => {
+    if (window.parent && window.parent !== window) {
+      const html = renderToStaticMarkup(document, { rootBlockId: 'root' });
+      window.parent.postMessage({ type: 'EMAIL_HTML', html }, '*');
+    }
+  }, [document]);
 
   let mainBoxSx: SxProps = {
     height: '100%',
