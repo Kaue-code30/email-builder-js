@@ -2,7 +2,9 @@
 
 ## 📤 Enviar HTML para o iframe
 
-Do seu projeto pai, envie HTML assim:
+### Importante: Timing do iframe
+
+O iframe precisa estar **completamente carregado** antes de receber mensagens. Use um delay:
 
 ```javascript
 const iframe = document.getElementById('email-editor-frame');
@@ -10,10 +12,38 @@ const iframe = document.getElementById('email-editor-frame');
 // HTML que você tem no banco de dados
 const htmlDoBanco = '<h1>Meu Email</h1><p>Conteúdo aqui</p>';
 
-iframe.contentWindow.postMessage({
-  type: 'LOAD_EMAIL_HTML',
-  html: htmlDoBanco
-}, '*');
+// AGUARDE o iframe estar pronto (recomendado: 1-2 segundos após o load)
+iframe.addEventListener('load', () => {
+  setTimeout(() => {
+    iframe.contentWindow.postMessage({
+      type: 'LOAD_EMAIL_HTML',
+      html: htmlDoBanco
+    }, '*');
+  }, 1500); // Aguarda 1.5 segundos
+});
+```
+
+### Ou envie múltiplas vezes (mais confiável)
+
+```javascript
+function enviarHtml(html) {
+  const iframe = document.getElementById('email-editor-frame');
+  if (!iframe?.contentWindow) return;
+  
+  iframe.contentWindow.postMessage({
+    type: 'LOAD_EMAIL_HTML',
+    html: html
+  }, '*');
+}
+
+// Tenta enviar 3 vezes com intervalos
+iframe.addEventListener('load', () => {
+  const htmlDoBanco = '<h1>Meu Email</h1><p>Conteúdo aqui</p>';
+  
+  setTimeout(() => enviarHtml(htmlDoBanco), 1000);
+  setTimeout(() => enviarHtml(htmlDoBanco), 2000);
+  setTimeout(() => enviarHtml(htmlDoBanco), 3000);
+});
 ```
 
 ## 📥 Receber HTML do iframe
@@ -66,7 +96,126 @@ async function salvarEmail() {
 }
 ```
 
-## 🚀 Testar Localmente
+## � Exemplo Angular (Solução do Problema)
+
+```typescript
+@ViewChild('builderFrame', { static: true })
+builderFrame!: ElementRef<HTMLIFrameElement>;
+
+private htmlPendente: string | null = null;
+iframeReady: boolean = false;
+
+onIframeLoad() {
+  console.log('Iframe load event disparado');
+  
+  // Aguarda um pouco mais para garantir que o app interno está pronto
+  setTimeout(() => {
+    this.iframeReady = true;
+    console.log('Iframe marcado como pronto');
+    
+    // Se tinha HTML esperando, envia agora
+    if (this.htmlPendente) {
+      this.loadHtmlIntoIframe(this.htmlPendente);
+      this.htmlPendente = null;
+    }
+  }, 2000); // 2 segundos após o evento load
+}
+
+private loadHtmlIntoIframe(html: string) {
+  console.log('Tentando enviar HTML...', {
+    iframeReady: this.iframeReady,
+    hasContentWindow: !!this.builderFrame?.nativeElement?.contentWindow,
+    htmlLength: html.length
+  });
+
+  if (!this.iframeReady) {
+    console.log('Iframe não está pronto ainda, guardando HTML para depois');
+    this.htmlPendente = html;
+    return;
+  }
+
+  const iframe = this.builderFrame.nativeElement;
+  if (!iframe?.contentWindow) {
+    console.error('ContentWindow não disponível');
+    return;
+  }
+
+  // Envia a mensagem
+  iframe.contentWindow.postMessage(
+    {
+      type: 'LOAD_EMAIL_HTML',
+      html: html
+    },
+    'https://email-builder-js-vite-emailbuilder.vercel.app'
+  );
+
+  console.log('✅ Mensagem postMessage enviada com sucesso');
+  
+  // Reenvia após 1 segundo para garantir
+  setTimeout(() => {
+
+## ⚠️ Problemas Comuns
+
+### 1. HTML não aparece no iframe
+**Causa**: Você está enviando o HTML muito cedo, antes do iframe estar pronto.
+
+**Solução**: Aguarde 1-2 segundos após o evento `load` do iframe:
+```typescript
+onIframeLoad() {
+  setTimeout(() => {
+    this.loadHtmlIntoIframe(this.htmlContent);
+  }, 2000); // 2 segundos
+}
+```
+
+### 2. postMessage não funciona
+**Causa**: O `contentWindow` pode não estar disponível ou o iframe não está no DOM.
+
+**Solução**: Verifique se o iframe existe e tente múltiplas vezes:
+```typescript
+private enviarComRetentativa(html: string, tentativas: number = 3) {
+  const intervalo = 1000;
+  
+  for (let i = 0; i < tentativas; i++) {
+    setTimeout(() => {
+      this.builderFrame.nativeElement.contentWindow?.postMessage(
+        { type: 'LOAD_EMAIL_HTML', html },
+        '*'
+      );
+    }, intervalo * (i + 1));
+  }
+}
+```
+
+### 3. Console não mostra erros mas nada acontece
+**Causa**: O iframe pode estar bloqueado por CORS ou CSP.
+
+**Solução**: 
+- Verifique o console do navegador (F12)
+- Teste com `*` no targetOrigin primeiro
+- Confirme que a URL do iframe está correta
+    iframe.contentWindow?.postMessage(
+      { type: 'LOAD_EMAIL_HTML', html: html },
+      'https://email-builder-js-vite-emailbuilder.vercel.app'
+    );
+    console.log('✅ Mensagem reenviada (backup)');
+  }, 1000);
+}
+
+ngAfterViewInit() {
+  window.addEventListener('message', this.onMessage);
+  
+  this.isEditMode = !!this.NotificacaoTemplate?.conteudo;
+  
+  // Aguarda o iframe estar pronto antes de tentar enviar
+  // O onIframeLoad() vai lidar com o envio
+  if (this.isEditMode && this.NotificacaoTemplate.conteudo) {
+    console.log('Modo edição: HTML será enviado após iframe carregar');
+  }
+}
+```
+
+## �🚀 Testar Localmente
 
 1. Inicie o dev server:
    ```bash
