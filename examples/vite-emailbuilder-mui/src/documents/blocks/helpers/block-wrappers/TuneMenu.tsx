@@ -229,22 +229,22 @@ export default function TuneMenu({ blockId }: Props) {
   return (
     <Paper sx={sx} onClick={(ev) => ev.stopPropagation()}>
       <Stack>
-        <Tooltip title="Move up" placement="left-start">
+        <Tooltip title="Mover para cima" placement="left-start">
           <IconButton onClick={() => handleMoveClick('up')} sx={{ color: 'text.primary' }}>
             <ArrowUpwardOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Move down" placement="left-start">
+        <Tooltip title="Mover para baixo" placement="left-start">
           <IconButton onClick={() => handleMoveClick('down')} sx={{ color: 'text.primary' }}>
             <ArrowDownwardOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Duplicate" placement="left-start">
+        <Tooltip title="Duplicar" placement="left-start">
           <IconButton onClick={handleDuplicateClick} sx={{ color: 'text.primary' }}>
             <ContentCopyOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete" placement="left-start">
+        <Tooltip title="Excluir" placement="left-start">
           <IconButton onClick={handleDeleteClick} sx={{ color: 'text.primary' }}>
             <DeleteOutlined fontSize="small" />
           </IconButton>
