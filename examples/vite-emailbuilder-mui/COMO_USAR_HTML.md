@@ -1,29 +1,90 @@
 # Como Enviar e Receber HTML do iframe
 
-## 🎯 Conversão Automática de HTML
+## 🎯 Como Funciona o Sistema
 
-O iframe agora **converte automaticamente** HTML em blocos visuais editáveis:
+### Fluxo Completo
 
-- `<h1>`, `<h2>`, `<h3>` → **Heading**
-- `<p>` → **Text**
-- `<a>` → **Button**
-- `<img>` → **Image**
-- `<hr>` → **Divider**
-- `<div>`, `<section>` → **Container**
-- Outros elementos → **Html** (fallback)
+```
+1. EDITAR: Usuário cria email com blocos visuais (Heading, Text, Button, etc)
+2. SALVAR: Você recebe HTML com metadados embutidos invisíveis
+3. BANCO: Salva apenas o HTML (com metadados) no banco de dados
+4. REABRIR: Envia HTML de volta pro iframe
+5. MÁGICA: Editor reconstrói os blocos PERFEITAMENTE para edição
+```
+
+### O que são os metadados?
+
+O iframe adiciona um **comentário HTML invisível** no início:
+
+```html
+<!-- EMAIL_BUILDER_DATA:eyJyb290Ijp7InR5cGUiOiJFbWFpbExheW91dCIsImRhdGEiOi...  -->
+<html>
+  <body>
+    <h1>Seu conteúdo aqui</h1>
+  </body>
+</html>
+```
+
+Este comentário contém a estrutura de blocos codificada em Base64, permitindo reconstrução perfeita.
+
+## 📤 Salvar HTML (Receber do iframe)
 
 ```javascript
-// Este HTML será convertido automaticamente em blocos
-const html = `
-  <h1 style="color: #333;">Título Principal</h1>
-  <p style="font-size: 16px;">Texto do parágrafo</p>
-  <a href="https://example.com" style="background: #0066FF; color: white; padding: 12px 24px;">
-    Clique Aqui
-  </a>
-  <img src="https://via.placeholder.com/400" alt="Imagem" />
-`;
+let htmlParaSalvar = '';
 
-// Resultado: 4 blocos editáveis (Heading + Text + Button + Image)
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'EMAIL_HTML') {
+    // HTML COM metadados (salvar no banco)
+    htmlParaSalvar = event.data.html;
+    
+    // HTML LIMPO sem metadados (enviar email)
+    const htmlLimpo = event.data.htmlClean;
+    
+    console.log('Salvar no banco:', htmlParaSalvar);
+    console.log('Enviar email:', htmlLimpo);
+  }
+});
+```
+
+### Qual HTML usar?
+
+- **`event.data.html`** → Salvar no banco (COM metadados para edição futura)
+- **`event.data.htmlClean`** → Enviar email (SEM metadados, HTML puro)
+
+## 📥 Reabrir para Edição (Enviar pro iframe)
+
+```javascript
+// HTML que você salvou no banco (com metadados)
+const htmlDoBanco = '<!-- EMAIL_BUILDER_DATA:... --><html>...</html>';
+
+iframe.contentWindow.postMessage({
+  type: 'LOAD_EMAIL_HTML',
+  html: htmlDoBanco  // Envia o HTML com metadados
+}, '*');
+
+// O iframe vai:
+// 1. Detectar os metadados
+// 2. Reconstruir TODOS os blocos originais
+// 3. Usuário pode editar perfeitamente
+```
+
+## 🆕 HTML Externo (sem metadados)
+
+Se você enviar HTML sem metadados, o editor tenta converter:
+
+```javascript
+// HTML de outra fonte (sem metadados)
+const htmlExterno = '<h1>Título</h1><p>Texto</p>';
+
+iframe.contentWindow.postMessage({
+  type: 'LOAD_EMAIL_HTML',
+  html: htmlExterno
+}, '*');
+
+// O iframe vai: 
+// 1. Detectar que não tem metadados
+// 2. Parsear o HTML e criar blocos automaticamente
+// 3. <h1> vira Heading, <p> vira Text, etc
 ```
 
 ## 📤 Enviar HTML para o iframe
@@ -122,7 +183,103 @@ async function salvarEmail() {
 }
 ```
 
-## � Exemplo Angular (Solução do Problema)
+## 💡 Exemplo Completo Angular
+
+```typescript
+export class ConfigTemplateComponent {
+  private templateHtml: string = ''; // HTML com metadados
+  private templateHtmlClean: string = ''; // HTML limpo
+
+  private onMessage = (event: MessageEvent) => {
+    if (event.data.type === 'EMAIL_HTML') {
+      // Salvar no banco (COM metadados)
+      this.templateHtml = event.data.html;
+      
+      // Enviar email (SEM metadados)
+      this.templateHtmlClean = event.data.htmlClean;
+      
+      console.log('✅ HTML atualizado');
+    }
+  };
+
+  ngAfterViewInit() {
+    window.addEventListener('message', this.onMessage);
+    
+    // Se está editando, carrega o HTML salvo
+    if (this.NotificacaoTemplate?.conteudo) {
+      setTimeout(() => {
+        this.loadHtmlIntoIframe(this.NotificacaoTemplate.conteudo);
+      }, 2000);
+    }
+  }
+
+  private loadHtmlIntoIframe(html: string) {
+    this.builderFrame.nativeElement.contentWindow?.postMessage(
+      {
+        type: 'LOAD_EMAIL_HTML',
+        html: html // HTML COM metadados do banco
+      },
+      'https://email-builder-js-vite-emailbuilder.vercel.app'
+    );
+  }
+
+  salvar() {
+    // Salva HTML COM metadados no banco
+    this.NotificacaoTemplate.conteudo = this.templateHtml;
+    
+    this._notificacaoTemplateService.save(this.NotificacaoTemplate)
+      .subscribe({
+        next: () => {
+          console.log('✅ Template salvo com metadados para edição futura');
+        }
+      });
+  }
+
+  enviarEmail() {
+    // Envia HTML LIMPO (sem metadados) no email
+    this._emailService.enviar({
+      destinatario: 'usuario@email.com',
+      assunto: 'Seu Email',
+      corpoHtml: this.templateHtmlClean // HTML limpo
+    });
+  }
+}
+```
+
+## 📊 Comparação: Com vs Sem Metadados
+
+### HTML COM Metadados (Salvar no Banco)
+
+```html
+<!-- EMAIL_BUILDER_DATA:eyJyb290Ijp7InR5cGUiOiJFbWFpbExh... -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <div style="padding: 20px;">
+      <h1 style="color: #333;">Bem-vindo!</h1>
+      <p style="font-size: 16px;">Conteúdo aqui</p>
+    </div>
+  </body>
+</html>
+```
+
+**Vantagem**: Ao reabrir, reconstrói PERFEITAMENTE todos os blocos visuais para edição.
+
+### HTML SEM Metadados (Enviar Email)
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <div style="padding: 20px;">
+      <h1 style="color: #333;">Bem-vindo!</h1>
+      <p style="font-size: 16px;">Conteúdo aqui</p>
+    </div>
+  </body>
+</html>
+```
+
+**Vantagem**: HTML limpo, menor tamanho, compatível com clientes de email.
 
 ```typescript
 @ViewChild('builderFrame', { static: true })

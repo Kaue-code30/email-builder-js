@@ -88,7 +88,8 @@
   </div>
 
   <script>
-    let currentHTML = '';
+    let currentHTML = ''; // HTML COM metadados (salvar banco)
+    let currentHTMLClean = ''; // HTML SEM metadados (enviar email)
 
     // ========================================
     // 1. RECEBER HTML DO IFRAME (em tempo real)
@@ -98,10 +99,17 @@
       // if (event.origin !== 'http://localhost:5173') return;
       
       if (event.data.type === 'EMAIL_HTML') {
+        // HTML COM metadados (para salvar no banco)
         currentHTML = event.data.html;
+        
+        // HTML LIMPO sem metadados (para enviar email)
+        currentHTMLClean = event.data.htmlClean;
+        
         const size = (currentHTML.length / 1024).toFixed(2);
         document.getElementById('status').innerHTML = 
-          `✅ <strong>HTML atualizado:</strong> ${size} KB`;
+          `✅ <strong>HTML atualizado:</strong> ${size} KB<br>
+          <small>• HTML completo: para salvar no banco</small><br>
+          <small>• HTML limpo: para enviar email</small>`;
       }
     });
 
@@ -151,42 +159,27 @@
     });
 
     // ========================================
-    // EXEMPLO 2: Simular carregar do banco (estrutura complexa)
+    // EXEMPLO 2: Simular carregar do banco (com metadados)
     // ========================================
     document.getElementById('loadFromDB').addEventListener('click', async () => {
-      // HTML complexo será parseado em múltiplos blocos
-      const htmlDoBanco = `
-        <div style="background-color: #f5f5f5; padding: 40px;">
-          <div style="background-color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333; font-size: 32px; margin: 0 0 20px 0; font-family: Arial, sans-serif; text-align: center;">
-              Email do Banco de Dados
-            </h1>
-            <p style="color: #666; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0; font-family: Arial, sans-serif; text-align: center;">
-              Este HTML complexo será convertido automaticamente em blocos visuais editáveis!
-            </p>
-            <div style="text-align: center;">
-              <a href="https://example.com" 
-                 style="display: inline-block;
-                        padding: 16px 40px;
-                        background-color: #0066FF;
-                        color: #ffffff;
-                        text-decoration: none;
-                        font-size: 16px;
-                        font-weight: bold;
-                        font-family: Arial, sans-serif;
-                        border-radius: 5px;">
-                Começar Agora
-              </a>
-            </div>
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
-            <p style="color: #999; font-size: 14px; margin: 0; font-family: Arial, sans-serif; text-align: center;">
-              © 2026 Sua Empresa. Todos os direitos reservados.
-            </p>
-          </div>
-        </div>
-      `;
+      // Tenta carregar do localStorage primeiro
+      const savedHTML = localStorage.getItem('emailTemplate');
       
-      enviarHTMLParaIframe(htmlDoBanco);
+      if (savedHTML) {
+        console.log('📥 Carregando HTML salvo do localStorage...');
+        enviarHTMLParaIframe(savedHTML);
+        document.getElementById('status').innerHTML = 
+          '✅ <strong>Template carregado!</strong> Os blocos foram reconstruídos perfeitamente.';
+        return;
+      }
+      
+      // Se não tem salvo, usa exemplo com metadados embutidos
+      const htmlComMetadados = `<!-- EMAIL_BUILDER_DATA:eyJyb290Ijp7InR5cGUiOiJFbWFpbExheW91dCIsImRhdGEiOnsiYmFja2Ryb3BDb2xvciI6IiNGNUY1RjUiLCJjYW52YXNDb2xvciI6IiNGRkZGRkYiLCJ0ZXh0Q29sb3IiOiIjMjYyNjI2IiwiZm9udEZhbWlseSI6Ik1PREVSTV9TQU5TIiwiY2hpbGRyZW5JZHMIKWIKASIIKX19LCJoZWFkaW5nLTEiOnLICJIZSI6IkhlYWRpbmciLCJkYXRhIjp7InN0eWxlIjp7ImNvbG9yIjoiIzMzMyIsInRleHRBbGlnbiI6ImNlbnRlciJ9LCJwcm9wcyI6eyJ0ZXh0IjoiRW1haWwgZG8gQmFuY28gZGUgRGFkb3MiLCJsZXZlbCI6ImgxIn19fSwidGV4dC0xIjp7InR5cGUIOiJUZXh0IiwiZGF0YSI6eyJzdHlsZSI6eyJjb2xvciI6IiM2NjYiLCJ0ZXh0QWxpZ24iOiJjZW50ZXIifSwicHJvcHMiOnsidGV4dCI6IkVzdGUgSFRNTCBmb2kgY2Fycn0gYWRvIGRvIGJhbmNvIGUgb3MgYmxvY29zIGZvcmFtIHJlY29uc3RydWlkb3MgcGVyZmVpdGFtZW50ZSEifX19LCJidXR0b24tMSI6eyJ0eXBlIjoiQnV0dG9uIiwiZGF0YSI6eyJzdHlsZSI6eyJiYWNrZ3JvdW5kQ29sb3IiOiIjMDA2NkZGIiwiY29sb3IiOiIjRkZGRkZGIiwidGV4dEFsaWduIjoiY2VudGVyIn0sInByb3BzIjp7InRleHQiOiJDb21lw6dhciBBZ29yYSIsInVybCI6Imh0dHBzOi8vZXhhbXBsZS5jb20ifX19fQ== -->
+<!DOCTYPE html><html><body><div style="background-color: #f5f5f5; padding: 40px;"><div style="background-color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto;"><h1 style="color: #333; text-align: center;">Email do Banco de Dados</h1><p style="color: #666; text-align: center;">Este HTML foi carregado do banco e os blocos foram reconstruídos perfeitamente!</p><div style="text-align: center;"><a href="https://example.com" style="display: inline-block; padding: 16px 40px; background-color: #0066FF; color: #ffffff; text-decoration: none;">Começar Agora</a></div></div></div></body></html>`;
+      
+      enviarHTMLParaIframe(htmlComMetadados);
+      document.getElementById('status').innerHTML = 
+        '✅ <strong>HTML do banco carregado!</strong> Os metadados permitiram reconstrução perfeita dos blocos.';
     });
 
     // ========================================
@@ -198,8 +191,9 @@
         return;
       }
       
-      console.log('📤 Salvando HTML no banco...');
-      console.log(currentHTML);
+      console.log('📤 Salvando HTML COM metadados no banco...');
+      console.log('Tamanho:', currentHTML.length, 'bytes');
+      console.log('Conteúdo:', currentHTML);
       
       // Em produção, você faria:
       /*
@@ -211,22 +205,21 @@
           },
           body: JSON.stringify({
             emailId: 123,
-            html: currentHTML
+            conteudo: currentHTML  // ← HTML COM metadados
           })
         });
         
-        const data = await response.json();
-        alert('✅ HTML salvo no banco com sucesso!');
-        document.getElementById('status').innerHTML = 
-          '✅ <strong>HTML salvo no banco!</strong>';
+        alert('✅ HTML salvo! Ao reabrir, todos os blocos estarão editáveis.');
       } catch (error) {
         alert('❌ Erro ao salvar: ' + error.message);
       }
       */
       
-      alert('✅ HTML salvo! (veja o console para ver o conteúdo)');
+      // Simula salvar
+      localStorage.setItem('emailTemplate', currentHTML);
+      alert('✅ HTML salvo no LocalStorage!\n\nQuando você reabrir, os blocos serão reconstruídos perfeitamente.');
       document.getElementById('status').innerHTML = 
-        '✅ <strong>HTML salvo no banco de dados!</strong>';
+        '✅ <strong>HTML salvo!</strong> Clique em "Carregar do Banco" para testar a reconstrução.';
     });
 
     // ========================================

@@ -20,6 +20,7 @@ import JsonPanel from './JsonPanel';
 import MainTabsGroup from './MainTabsGroup';
 import ShareButton from './ShareButton';
 import { parseHtmlToDocument } from './parseHtmlToDocument';
+import { embedBlocksInHtml, extractBlocksFromHtml } from './htmlMetadata';
 
 export default function TemplatePanel() {
   const document = useDocument();
@@ -27,10 +28,23 @@ export default function TemplatePanel() {
   const selectedScreenSize = useSelectedScreenSize();
 
   // Envia o HTML para o parent quando o documento mudar
+  // IMPORTANTE: Inclui metadados para reconstrução perfeita
   useEffect(() => {
     if (window.parent && window.parent !== window) {
       const html = renderToStaticMarkup(document, { rootBlockId: 'root' });
-      window.parent.postMessage({ type: 'EMAIL_HTML', html }, '*');
+      
+      // Embute os blocos no HTML para poder reconstruir depois
+      const htmlWithMetadata = embedBlocksInHtml(html, document);
+
+      console.log(html);
+      
+
+
+      window.parent.postMessage({ 
+        type: 'EMAIL_HTML', 
+        html: htmlWithMetadata,
+        htmlClean: html // HTML limpo sem metadados (para envio de email)
+      }, '*');
     }
   }, [document]);
 
@@ -41,26 +55,35 @@ export default function TemplatePanel() {
       // if (event.origin !== 'https://seu-dominio.com') return;
 
       if (event.data.type === 'LOAD_EMAIL_HTML') {
-        // Recebe HTML do parent e tenta converter para blocos estruturados
+        // Recebe HTML do parent
         try {
           if (event.data.html) {
             console.log('📥 Recebendo HTML do parent...');
             
-            // Tenta fazer o parse do HTML para estrutura de blocos
-            const parsedDocument = parseHtmlToDocument(event.data.html);
+            // PASSO 1: Tenta extrair metadados embutidos (blocos originais)
+            const extractedDocument = extractBlocksFromHtml(event.data.html);
             
-            console.log('✅ HTML convertido para documento:', parsedDocument);
-            resetDocument(parsedDocument);
+            if (extractedDocument) {
+              // HTML foi criado pelo editor, reconstrução PERFEITA
+              console.log('✅ Documento reconstruído dos metadados (edição perfeita)');
+              resetDocument(extractedDocument);
+            } else {
+              // PASSO 2: HTML externo, tenta parsear para blocos
+              console.log('🔄 HTML externo, tentando converter para blocos...');
+              const parsedDocument = parseHtmlToDocument(event.data.html);
+              console.log('✅ HTML convertido para blocos editáveis');
+              resetDocument(parsedDocument);
+            }
           }
         } catch (error) {
           console.error('❌ Erro ao carregar HTML:', error);
           
-          // Fallback: Se falhar o parse, cria um bloco Html simples
+          // Fallback: Se falhar tudo, cria um bloco Html simples
           const htmlDocument: TEditorConfiguration = {
             root: {
               type: 'EmailLayout',
               data: {
-                backdropColor: '#F5F5F5',
+                backdropColor: '#f00303',
                 canvasColor: '#FFFFFF',
                 textColor: '#262626',
                 fontFamily: 'MODERN_SANS',
