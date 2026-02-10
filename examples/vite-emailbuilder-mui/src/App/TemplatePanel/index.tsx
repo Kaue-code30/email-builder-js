@@ -6,6 +6,7 @@ import { MonitorOutlined, PhoneIphoneOutlined } from '@mui/icons-material';
 
 import EditorBlock from '../../documents/editor/EditorBlock';
 import {
+  resetDocument,
   setSelectedScreenSize,
   useDocument,
   useSelectedMainTab,
@@ -32,6 +33,28 @@ export default function TemplatePanel() {
       window.parent.postMessage({ type: 'EMAIL_HTML', html }, '*');
     }
   }, [document]);
+
+  // Recebe mensagens do parent para carregar documentos
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Por segurança, valide o origin em produção:
+      // if (event.origin !== 'https://seu-dominio.com') return;
+
+      if (event.data.type === 'LOAD_EMAIL_JSON') {
+        // Recebe o documento JSON do parent e carrega no editor
+        try {
+          if (event.data.document) {
+            resetDocument(event.data.document);
+          }
+        } catch (error) {
+          console.error('Erro ao carregar documento:', error);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   let mainBoxSx: SxProps = {
     height: '100%',
