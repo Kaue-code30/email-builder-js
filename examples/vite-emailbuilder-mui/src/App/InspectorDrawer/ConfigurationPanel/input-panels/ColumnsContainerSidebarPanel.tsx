@@ -36,9 +36,9 @@ export default function ColumnsContainerPanel({ data, setData }: ColumnsContaine
   };
 
   return (
-    <BaseSidebarPanel title="Columns block">
+    <BaseSidebarPanel title="Configuração das Colunas">
       <RadioGroupInput
-        label="Number of columns"
+        label="Número de colunas"
         defaultValue={data.props?.columnsCount === 2 ? '2' : '3'}
         onChange={(v) => {
           updateData({ ...data, props: { ...data.props, columnsCount: v === '2' ? 2 : 3 } });
@@ -54,7 +54,7 @@ export default function ColumnsContainerPanel({ data, setData }: ColumnsContaine
         }}
       />
       <SliderInput
-        label="Columns gap"
+        label="Espaçamento entre colunas"
         iconLabel={<SpaceBarOutlined sx={{ color: 'text.secondary' }} />}
         units="px"
         step={4}
@@ -65,7 +65,7 @@ export default function ColumnsContainerPanel({ data, setData }: ColumnsContaine
         onChange={(columnsGap) => updateData({ ...data, props: { ...data.props, columnsGap } })}
       />
       <RadioGroupInput
-        label="Alignment"
+        label="Alinhamento"
         defaultValue={data.props?.contentAlignment ?? 'middle'}
         onChange={(contentAlignment) => {
           updateData({ ...data, props: { ...data.props, contentAlignment } });

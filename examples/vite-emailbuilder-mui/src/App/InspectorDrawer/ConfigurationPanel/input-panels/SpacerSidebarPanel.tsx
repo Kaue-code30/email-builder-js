@@ -25,9 +25,9 @@ export default function SpacerSidebarPanel({ data, setData }: SpacerSidebarPanel
   };
 
   return (
-    <BaseSidebarPanel title="Spacer block">
+    <BaseSidebarPanel title="Configuração do Spacer">
       <SliderInput
-        label="Height"
+        label="Altura"
         iconLabel={<HeightOutlined sx={{ color: 'text.secondary' }} />}
         units="px"
         step={4}

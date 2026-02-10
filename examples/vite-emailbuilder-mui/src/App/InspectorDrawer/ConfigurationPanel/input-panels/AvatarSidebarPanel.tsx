@@ -33,9 +33,9 @@ export default function AvatarSidebarPanel({ data, setData }: AvatarSidebarPanel
   const shape = data.props?.shape ?? AvatarPropsDefaults.shape;
 
   return (
-    <BaseSidebarPanel title="Avatar block">
+    <BaseSidebarPanel title="Configuração do Avatar">
       <SliderInput
-        label="Size"
+        label="Tamanho"
         iconLabel={<AspectRatioOutlined sx={{ color: 'text.secondary' }} />}
         units="px"
         step={3}
@@ -47,25 +47,25 @@ export default function AvatarSidebarPanel({ data, setData }: AvatarSidebarPanel
         }}
       />
       <RadioGroupInput
-        label="Shape"
+        label="Formato"
         defaultValue={shape}
         onChange={(shape) => {
           updateData({ ...data, props: { ...data.props, shape } });
         }}
       >
-        <ToggleButton value="circle">Circle</ToggleButton>
-        <ToggleButton value="square">Square</ToggleButton>
-        <ToggleButton value="rounded">Rounded</ToggleButton>
+        <ToggleButton value="circle">Círculo</ToggleButton>
+        <ToggleButton value="square">Quadrado</ToggleButton>
+        <ToggleButton value="rounded">Arredondado</ToggleButton>
       </RadioGroupInput>
       <TextInput
-        label="Image URL"
+        label="URL da imagem"
         defaultValue={imageUrl}
         onChange={(imageUrl) => {
           updateData({ ...data, props: { ...data.props, imageUrl } });
         }}
       />
       <TextInput
-        label="Alt text"
+        label="Texto alternativo"
         defaultValue={alt}
         onChange={(alt) => {
           updateData({ ...data, props: { ...data.props, alt } });
