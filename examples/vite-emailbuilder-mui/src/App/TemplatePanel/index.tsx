@@ -19,6 +19,7 @@ import HtmlPanel from './HtmlPanel';
 import JsonPanel from './JsonPanel';
 import MainTabsGroup from './MainTabsGroup';
 import ShareButton from './ShareButton';
+import { parseHtmlToDocument } from './parseHtmlToDocument';
 
 export default function TemplatePanel() {
   const document = useDocument();
@@ -40,34 +41,43 @@ export default function TemplatePanel() {
       // if (event.origin !== 'https://seu-dominio.com') return;
 
       if (event.data.type === 'LOAD_EMAIL_HTML') {
-        // Recebe HTML do parent e cria um documento com bloco Html
+        // Recebe HTML do parent e tenta converter para blocos estruturados
         try {
           if (event.data.html) {
-            const htmlDocument: TEditorConfiguration = {
-              root: {
-                type: 'EmailLayout',
-                data: {
-                  backdropColor: '#F5F5F5',
-                  canvasColor: '#FFFFFF',
-                  textColor: '#262626',
-                  fontFamily: 'MODERN_SANS',
-                  childrenIds: ['html-block'],
-                },
-              },
-              'html-block': {
-                type: 'Html',
-                data: {
-                  style: {},
-                  props: {
-                    contents: event.data.html,
-                  },
-                },
-              },
-            };
-            resetDocument(htmlDocument);
+            console.log('📥 Recebendo HTML do parent...');
+            
+            // Tenta fazer o parse do HTML para estrutura de blocos
+            const parsedDocument = parseHtmlToDocument(event.data.html);
+            
+            console.log('✅ HTML convertido para documento:', parsedDocument);
+            resetDocument(parsedDocument);
           }
         } catch (error) {
-          console.error('Erro ao carregar HTML:', error);
+          console.error('❌ Erro ao carregar HTML:', error);
+          
+          // Fallback: Se falhar o parse, cria um bloco Html simples
+          const htmlDocument: TEditorConfiguration = {
+            root: {
+              type: 'EmailLayout',
+              data: {
+                backdropColor: '#F5F5F5',
+                canvasColor: '#FFFFFF',
+                textColor: '#262626',
+                fontFamily: 'MODERN_SANS',
+                childrenIds: ['html-block'],
+              },
+            },
+            'html-block': {
+              type: 'Html',
+              data: {
+                style: {},
+                props: {
+                  contents: event.data.html,
+                },
+              },
+            },
+          };
+          resetDocument(htmlDocument);
         }
       }
     };

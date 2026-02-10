@@ -1,5 +1,31 @@
 # Como Enviar e Receber HTML do iframe
 
+## 🎯 Conversão Automática de HTML
+
+O iframe agora **converte automaticamente** HTML em blocos visuais editáveis:
+
+- `<h1>`, `<h2>`, `<h3>` → **Heading**
+- `<p>` → **Text**
+- `<a>` → **Button**
+- `<img>` → **Image**
+- `<hr>` → **Divider**
+- `<div>`, `<section>` → **Container**
+- Outros elementos → **Html** (fallback)
+
+```javascript
+// Este HTML será convertido automaticamente em blocos
+const html = `
+  <h1 style="color: #333;">Título Principal</h1>
+  <p style="font-size: 16px;">Texto do parágrafo</p>
+  <a href="https://example.com" style="background: #0066FF; color: white; padding: 12px 24px;">
+    Clique Aqui
+  </a>
+  <img src="https://via.placeholder.com/400" alt="Imagem" />
+`;
+
+// Resultado: 4 blocos editáveis (Heading + Text + Button + Image)
+```
+
 ## 📤 Enviar HTML para o iframe
 
 ### Importante: Timing do iframe
@@ -269,6 +295,41 @@ window.addEventListener('message', (event) => {
 ## 📝 Notas
 
 - O iframe **aceita HTML puro** que você salva no banco
+- HTML é **automaticamente convertido** em blocos editáveis quando possível
 - Toda alteração no editor envia novo HTML automaticamente
 - O HTML gerado está pronto para envio de email
 - Funciona com qualquer HTML válido (tabelas, inline styles, etc)
+
+## 🔄 Conversão: O que acontece?
+
+### HTML Simples → Blocos Estruturados
+
+```html
+<!-- Você envia isso: -->
+<h1>Título</h1>
+<p>Parágrafo de texto</p>
+<a href="#">Botão</a>
+
+<!-- O editor cria: -->
+- 1 bloco Heading (editável visualmente)
+- 1 bloco Text (editável visualmente)  
+- 1 bloco Button (editável visualmente)
+```
+
+### HTML Complexo → Mantém estrutura
+
+```html
+<!-- Você envia HTML com tabelas complexas: -->
+<table>...</table>
+
+<!-- O editor tenta parsear, mas pode criar: -->
+- 1 bloco Container com múltiplos Text/Button dentro
+- OU 1 bloco Html se não conseguir parsear
+```
+
+### Vantagens
+
+✅ **Edição Visual**: Usuário edita com interface gráfica  
+✅ **Preserva Estilos**: Cores, fontes, padding são mantidos  
+✅ **Flexível**: Se não conseguir parsear, usa bloco Html  
+✅ **Bi-direcional**: HTML → Blocos → HTML

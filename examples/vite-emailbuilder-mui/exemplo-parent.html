@@ -121,15 +121,15 @@
     }
 
     // ========================================
-    // EXEMPLO 1: Email Simples
+    // EXEMPLO 1: Email Simples (será convertido em blocos)
     // ========================================
     document.getElementById('loadSimple').addEventListener('click', () => {
       const htmlSimples = `
-        <h1 style="color: #0066FF; font-family: Arial, sans-serif;">
+        <h1 style="color: #0066FF; font-family: Arial, sans-serif; text-align: center;">
           Olá Mundo!
         </h1>
         <p style="color: #333; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
-          Este é um HTML simples carregado do projeto pai.
+          Este HTML será automaticamente convertido em blocos editáveis: Heading, Text e Button.
         </p>
         <a href="https://example.com" 
            style="display: inline-block;
@@ -141,63 +141,49 @@
                   font-family: Arial, sans-serif;">
           Clique Aqui
         </a>
+        <hr style="margin: 20px 0; border: 1px solid #ddd;" />
+        <img src="https://via.placeholder.com/600x200" 
+             alt="Imagem de exemplo" 
+             style="width: 100%; max-width: 600px;" />
       `;
       
       enviarHTMLParaIframe(htmlSimples);
     });
 
     // ========================================
-    // EXEMPLO 2: Simular carregar do banco
+    // EXEMPLO 2: Simular carregar do banco (estrutura complexa)
     // ========================================
     document.getElementById('loadFromDB').addEventListener('click', async () => {
-      // Em produção, seria algo como:
-      // const response = await fetch('/api/emails/123');
-      // const data = await response.json();
-      // enviarHTMLParaIframe(data.html);
-      
+      // HTML complexo será parseado em múltiplos blocos
       const htmlDoBanco = `
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px;">
-          <tr>
-            <td align="center">
-              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
-                <tr>
-                  <td style="padding: 40px; text-align: center;">
-                    <h1 style="color: #333; font-size: 32px; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
-                      Email do Banco de Dados
-                    </h1>
-                    <p style="color: #666; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0; font-family: Arial, sans-serif;">
-                      Este HTML foi carregado do banco de dados.<br>
-                      Agora você pode editá-lo visualmente!
-                    </p>
-                    <table cellpadding="0" cellspacing="0" border="0" align="center">
-                      <tr>
-                        <td align="center" style="border-radius: 5px; background-color: #0066FF;">
-                          <a href="https://example.com" 
-                             style="display: inline-block;
-                                    padding: 16px 40px;
-                                    color: #ffffff;
-                                    text-decoration: none;
-                                    font-size: 16px;
-                                    font-weight: bold;
-                                    font-family: Arial, sans-serif;">
-                            Começar Agora
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 30px; background-color: #f8f9fa; text-align: center;">
-                    <p style="color: #999; font-size: 14px; margin: 0; font-family: Arial, sans-serif;">
-                      © 2026 Sua Empresa. Todos os direitos reservados.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
+        <div style="background-color: #f5f5f5; padding: 40px;">
+          <div style="background-color: #ffffff; padding: 40px; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #333; font-size: 32px; margin: 0 0 20px 0; font-family: Arial, sans-serif; text-align: center;">
+              Email do Banco de Dados
+            </h1>
+            <p style="color: #666; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0; font-family: Arial, sans-serif; text-align: center;">
+              Este HTML complexo será convertido automaticamente em blocos visuais editáveis!
+            </p>
+            <div style="text-align: center;">
+              <a href="https://example.com" 
+                 style="display: inline-block;
+                        padding: 16px 40px;
+                        background-color: #0066FF;
+                        color: #ffffff;
+                        text-decoration: none;
+                        font-size: 16px;
+                        font-weight: bold;
+                        font-family: Arial, sans-serif;
+                        border-radius: 5px;">
+                Começar Agora
+              </a>
+            </div>
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
+            <p style="color: #999; font-size: 14px; margin: 0; font-family: Arial, sans-serif; text-align: center;">
+              © 2026 Sua Empresa. Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
       `;
       
       enviarHTMLParaIframe(htmlDoBanco);
