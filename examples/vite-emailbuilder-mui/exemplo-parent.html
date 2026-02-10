@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemplo - Parent com Email Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .controls {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #0066FF;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0052CC;
+    }
+    button.secondary {
+      background: #6c757d;
+    }
+    button.secondary:hover {
+      background: #5a6268;
+    }
+    #status {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fff;
+      border-left: 4px solid #0066FF;
+      border-radius: 4px;
+    }
+    iframe {
+      width: 100%;
+      height: 800px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+    }
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+    .info {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Email Builder - Integração Parent</h1>
+    <p class="info">
+      Exemplo de como carregar HTML do banco de dados no iframe e receber o HTML editado.
+    </p>
+
+    <div class="controls">
+      <div>
+        <button id="loadSimple">📧 Carregar Email Simples</button>
+        <button id="loadFromDB">💾 Simular Carregar do Banco</button>
+        <button id="saveHTML" class="secondary">💾 Salvar HTML</button>
+        <button id="showHTML" class="secondary">👁️ Ver HTML</button>
+      </div>
+      <div id="status">Aguardando HTML do editor...</div>
+    </div>
+
+    <iframe 
+      id="email-editor-frame" 
+      src="http://localhost:5173"
+      title="Email Builder"
+    ></iframe>
+  </div>
+
+  <script>
+    let currentHTML = '';
+
+    // ========================================
+    // 1. RECEBER HTML DO IFRAME (em tempo real)
+    // ========================================
+    window.addEventListener('message', (event) => {
+      // Em produção, valide o origin:
+      // if (event.origin !== 'http://localhost:5173') return;
+      
+      if (event.data.type === 'EMAIL_HTML') {
+        currentHTML = event.data.html;
+        const size = (currentHTML.length / 1024).toFixed(2);
+        document.getElementById('status').innerHTML = 
+          `✅ <strong>HTML atualizado:</strong> ${size} KB`;
+      }
+    });
+
+    // ========================================
+    // 2. ENVIAR HTML PARA O IFRAME
+    // ========================================
+    function enviarHTMLParaIframe(html) {
+      const iframe = document.getElementById('email-editor-frame');
+      
+      iframe.contentWindow.postMessage({
+        type: 'LOAD_EMAIL_HTML',
+        html: html
+      }, '*');
+      
+      document.getElementById('status').innerHTML = 
+        '✅ <strong>HTML carregado no editor!</strong>';
+    }
+
+    // ========================================
+    // EXEMPLO 1: Email Simples
+    // ========================================
+    document.getElementById('loadSimple').addEventListener('click', () => {
+      const htmlSimples = `
+        <h1 style="color: #0066FF; font-family: Arial, sans-serif;">
+          Olá Mundo!
+        </h1>
+        <p style="color: #333; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+          Este é um HTML simples carregado do projeto pai.
+        </p>
+        <a href="https://example.com" 
+           style="display: inline-block;
+                  background-color: #0066FF;
+                  color: white;
+                  padding: 12px 24px;
+                  text-decoration: none;
+                  border-radius: 5px;
+                  font-family: Arial, sans-serif;">
+          Clique Aqui
+        </a>
+      `;
+      
+      enviarHTMLParaIframe(htmlSimples);
+    });
+
+    // ========================================
+    // EXEMPLO 2: Simular carregar do banco
+    // ========================================
+    document.getElementById('loadFromDB').addEventListener('click', async () => {
+      // Em produção, seria algo como:
+      // const response = await fetch('/api/emails/123');
+      // const data = await response.json();
+      // enviarHTMLParaIframe(data.html);
+      
+      const htmlDoBanco = `
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px;">
+          <tr>
+            <td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 40px; text-align: center;">
+                    <h1 style="color: #333; font-size: 32px; margin: 0 0 20px 0; font-family: Arial, sans-serif;">
+                      Email do Banco de Dados
+                    </h1>
+                    <p style="color: #666; font-size: 18px; line-height: 1.6; margin: 0 0 30px 0; font-family: Arial, sans-serif;">
+                      Este HTML foi carregado do banco de dados.<br>
+                      Agora você pode editá-lo visualmente!
+                    </p>
+                    <table cellpadding="0" cellspacing="0" border="0" align="center">
+                      <tr>
+                        <td align="center" style="border-radius: 5px; background-color: #0066FF;">
+                          <a href="https://example.com" 
+                             style="display: inline-block;
+                                    padding: 16px 40px;
+                                    color: #ffffff;
+                                    text-decoration: none;
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                    font-family: Arial, sans-serif;">
+                            Começar Agora
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 30px; background-color: #f8f9fa; text-align: center;">
+                    <p style="color: #999; font-size: 14px; margin: 0; font-family: Arial, sans-serif;">
+                      © 2026 Sua Empresa. Todos os direitos reservados.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      `;
+      
+      enviarHTMLParaIframe(htmlDoBanco);
+    });
+
+    // ========================================
+    // 3. SALVAR HTML NO BANCO
+    // ========================================
+    document.getElementById('saveHTML').addEventListener('click', async () => {
+      if (!currentHTML) {
+        alert('❌ Nenhum HTML disponível ainda. Aguarde o editor carregar.');
+        return;
+      }
+      
+      console.log('📤 Salvando HTML no banco...');
+      console.log(currentHTML);
+      
+      // Em produção, você faria:
+      /*
+      try {
+        const response = await fetch('/api/emails/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            emailId: 123,
+            html: currentHTML
+          })
+        });
+        
+        const data = await response.json();
+        alert('✅ HTML salvo no banco com sucesso!');
+        document.getElementById('status').innerHTML = 
+          '✅ <strong>HTML salvo no banco!</strong>';
+      } catch (error) {
+        alert('❌ Erro ao salvar: ' + error.message);
+      }
+      */
+      
+      alert('✅ HTML salvo! (veja o console para ver o conteúdo)');
+      document.getElementById('status').innerHTML = 
+        '✅ <strong>HTML salvo no banco de dados!</strong>';
+    });
+
+    // ========================================
+    // 4. VISUALIZAR HTML
+    // ========================================
+    document.getElementById('showHTML').addEventListener('click', () => {
+      if (!currentHTML) {
+        alert('❌ Nenhum HTML disponível ainda.');
+        return;
+      }
+      
+      // Abre em nova janela para visualizar
+      const newWindow = window.open('', '_blank');
+      newWindow.document.write(currentHTML);
+      newWindow.document.close();
+    });
+
+    // ========================================
+    // AUTO-SAVE (opcional)
+    // ========================================
+    let saveTimeout;
+    
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'EMAIL_HTML') {
+        currentHTML = event.data.html;
+        
+        // Cancela o timer anterior
+        clearTimeout(saveTimeout);
+        
+        // Auto-save após 3 segundos de inatividade
+        saveTimeout = setTimeout(() => {
+          console.log('💾 Auto-salvando...');
+          // Aqui você chamaria a API de save
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>

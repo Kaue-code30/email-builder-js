@@ -12,11 +12,10 @@ import {
   useSelectedMainTab,
   useSelectedScreenSize,
 } from '../../documents/editor/EditorContext';
+import { TEditorConfiguration } from '../../documents/editor/core';
 import ToggleInspectorPanelButton from '../InspectorDrawer/ToggleInspectorPanelButton';
 
-import DownloadJson from './DownloadJson';
 import HtmlPanel from './HtmlPanel';
-import ImportJson from './ImportJson';
 import JsonPanel from './JsonPanel';
 import MainTabsGroup from './MainTabsGroup';
 import ShareButton from './ShareButton';
@@ -40,14 +39,35 @@ export default function TemplatePanel() {
       // Por segurança, valide o origin em produção:
       // if (event.origin !== 'https://seu-dominio.com') return;
 
-      if (event.data.type === 'LOAD_EMAIL_JSON') {
-        // Recebe o documento JSON do parent e carrega no editor
+      if (event.data.type === 'LOAD_EMAIL_HTML') {
+        // Recebe HTML do parent e cria um documento com bloco Html
         try {
-          if (event.data.document) {
-            resetDocument(event.data.document);
+          if (event.data.html) {
+            const htmlDocument: TEditorConfiguration = {
+              root: {
+                type: 'EmailLayout',
+                data: {
+                  backdropColor: '#F5F5F5',
+                  canvasColor: '#FFFFFF',
+                  textColor: '#262626',
+                  fontFamily: 'MODERN_SANS',
+                  childrenIds: ['html-block'],
+                },
+              },
+              'html-block': {
+                type: 'Html',
+                data: {
+                  style: {},
+                  props: {
+                    contents: event.data.html,
+                  },
+                },
+              },
+            };
+            resetDocument(htmlDocument);
           }
         } catch (error) {
-          console.error('Erro ao carregar documento:', error);
+          console.error('Erro ao carregar HTML:', error);
         }
       }
     };
